@@ -45,7 +45,6 @@
   <ItemGroup>
     <Compile Include="DataEntry.cs" />
     <Compile Include="LocationOfTasksOnTimeLine.cs" />
-    <Compile Include="LocationOfTasksOnTimeLineV2.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RankingOfTasks.cs" />

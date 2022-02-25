@@ -11,7 +11,7 @@ namespace Planner
         public static Task[] RankingByImportance(ref Task[] listTasks)
         {
             var orderedList = from task in listTasks
-                              orderby task.ImportanceOfTask descending
+                              orderby task.Importance descending
                               select task;
 
             int i = 0;

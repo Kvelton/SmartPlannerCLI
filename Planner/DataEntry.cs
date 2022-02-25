@@ -9,26 +9,24 @@ namespace Planner
 {
     internal class DataEntry
     {
-        public static Task[] DataEntryMain()
+        public static Task[] EntryTasks()
         {
             int taskCounter = 0;
-
             Task[] listTasks;
+            string locationOfInputTasks = @"D:\Учёба\Мобильные приложения\SmartPlannerCLI\tasks.txt";
 
-            string path = @"D:\C#\Планировщик\EntryTask.txt";
-
-            using (StreamReader sr = new StreamReader(path))
+            using (StreamReader sr = new StreamReader(locationOfInputTasks))
             {
                 listTasks = new Task[TaskCounter(sr)];
             }
 
-            using (StreamReader sr = new StreamReader(path))
+            using (StreamReader sr = new StreamReader(locationOfInputTasks))
             {
                 string line;
 
                 while ((line = sr.ReadLine()) != null)
                 {
-                    listTasks[taskCounter] = ConversionToVar(line);
+                    listTasks[taskCounter] = ConversionLineToVar(line);
                     taskCounter++;
                 }
             }
@@ -36,31 +34,39 @@ namespace Planner
             return listTasks;
         }
 
-        static Task ConversionToVar(string line)
+        private static Task ConversionLineToVar(string line)
         {
-            string[] ArrayStringTask = line.Split(new char[] { '|' });
+            string[] arrayStringElements = DivisionIntoElements(line);
 
+            return ConvertingElements(arrayStringElements);
+        }
+
+        private static Task ConvertingElements(string[] arrayStringElements)
+        {
             Task task = new Task();
 
-            task.Name = ArrayStringTask[0];
-            task.TimeInMinutes = int.Parse(ArrayStringTask[1]);
-            task.DataDeadline = Convert.ToDateTime(ArrayStringTask[2]);
-            task.DataDeadline = task.DataDeadline.AddHours((Convert.ToDateTime(ArrayStringTask[3])).Hour);
-            task.DataDeadline = task.DataDeadline.AddMinutes((Convert.ToDateTime(ArrayStringTask[3])).Minute);
-            task.ImportanceOfTask = Convert.ToByte(ArrayStringTask[4]);
+            task.Name = arrayStringElements[0];
+            task.TimeInMinutes = int.Parse(arrayStringElements[1]);
+            task.DataDeadline = Convert.ToDateTime(arrayStringElements[2]);
+            task.DataDeadline = task.DataDeadline.AddHours((Convert.ToDateTime(arrayStringElements[3])).Hour);
+            task.DataDeadline = task.DataDeadline.AddMinutes((Convert.ToDateTime(arrayStringElements[3])).Minute);
+            task.Importance = Convert.ToByte(arrayStringElements[4]);
             task.Beginning = task.DataDeadline.AddMinutes(-task.TimeInMinutes);
             task.Ending = task.DataDeadline;
-
+            
             return task;
         }
 
-        static int TaskCounter(StreamReader sr)
+        private static string[] DivisionIntoElements(string line)
+        {
+            return line.Split(new char[] { '|' });
+        }
+
+        private static int TaskCounter(StreamReader sr)
         {
             int i = 0;
 
-            string line;
-
-            while ((line = sr.ReadLine()) != null)
+            while (sr.ReadLine() != null)
             {
                 i++;
             }

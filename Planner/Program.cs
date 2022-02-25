@@ -11,14 +11,13 @@ namespace Planner
     {
         static void Main(string[] args)
         {
-            Task[] listTasks = DataEntry.DataEntryMain();
+            Task[] listTasks = DataEntry.EntryTasks();
 
             RankingOfTasks.RankingByImportance(ref listTasks);
 
-            Task[] TimeLine = LocationOfTasksOnTimeLineV2.SettingTasks(listTasks);
+            Task[] TimeLine = LocationOfTasksOnTimeLine.SettingTasks(listTasks);
 
             PrintListTasks(TimeLine, "Actual");
-
             PrintListTasks(listTasks, "Overdue");
         }
 
@@ -47,7 +46,6 @@ namespace Planner
                 default:
                     break;
             }
-            
             Console.WriteLine("-----------------------");
         }
     }
