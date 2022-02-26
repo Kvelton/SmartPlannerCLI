@@ -15,7 +15,7 @@ namespace Planner
 
             RankingOfTasks.RankingByImportance(ref listTasks);
 
-            Task[] TimeLine = LocationOfTasksOnTimeLine.SettingTasks(listTasks);
+            Task[] TimeLine = LocationOfTasksOnTimeLine.SortingTask(listTasks);
 
             PrintListTasks(TimeLine, "Actual");
             PrintListTasks(listTasks, "Overdue");
