@@ -67,15 +67,20 @@ namespace Planner
         {
             for (int j = 0; TemporaryTimeLine[j] != null; j++)
             {
-                if (NoName(task, TemporaryTimeLine[j]))
-                {
-                    if (task.Ending <= (TemporaryTimeLine[j]?.Beginning ?? DateTime.Now))
-                    {
-                        if ((j == 0) || (TemporaryTimeLine[j - 1].Ending <= task.Beginning)) { InsertTask(ref TimeLine, task, j); break; }
+                Task processedTask = TemporaryTimeLine[j];
 
+                if (NoName(task, processedTask))
+                {
+                    if (task.Ending <= (processedTask?.Beginning ?? DateTime.Now))
+                    {
+                        if ((j == 0) || (TemporaryTimeLine[j - 1].Ending <= task.Beginning)) { 
+                            InsertTask(ref TimeLine, task, j);
+                            break; 
+                        }
                         else
                         {
-                            if (TemporaryTimeLine[j - 1].Fixed)
+                            Task previousProcessedTask = TemporaryTimeLine[j - 1];
+                            if (previousProcessedTask.Fixed)
                             {
                                 ShiftLocationTask(ref task , ref TemporaryTimeLine[j - 1]);
                                 SearchLocationTask(ref TimeLine, TemporaryTimeLine, task);
@@ -83,15 +88,15 @@ namespace Planner
                             }
                             else
                             {
-                                ShiftLocationTask(ref TemporaryTimeLine[j - 1], ref task);
+                                ShiftLocationTask(ref previousProcessedTask, ref task);
 
-                                if (TemporaryTimeLine[j - 1].Beginning < DateTime.Now) { TemporaryTimeLine[j - 1].EnoughTime = false; continue; }
+                                if (previousProcessedTask.Beginning < DateTime.Now) { previousProcessedTask.EnoughTime = false; continue; }
 
                                 InsertTask(ref TemporaryTimeLine, task, j - 1);
 
                                 task = TemporaryTimeLine[j];
                                 TemporaryTimeLine[j] = null;
-                                SearchLocationTask(ref TimeLine, TemporaryTimeLine, TemporaryTimeLine[j - 1]);
+                                SearchLocationTask(ref TimeLine, TemporaryTimeLine, previousProcessedTask);
                                 break;
                             }
                         }
@@ -107,6 +112,8 @@ namespace Planner
                 {
                     if (TemporaryTimeLine[j + 1] == null)
                     {
+                        Task nextProcessedTask = TemporaryTimeLine[j + 1];
+
                         if (task.Beginning >= (TemporaryTimeLine[j]?.Ending ?? DateTime.Now)) { InsertTask(ref TimeLine, task, j + 1); break; }
 
                         else
@@ -119,14 +126,16 @@ namespace Planner
                             }
                             else
                             {
-                                ShiftLocationTask(ref TemporaryTimeLine[j], ref task);
+                                ShiftLocationTask(ref processedTask, ref task);
 
-                                if (TemporaryTimeLine[j].Beginning < DateTime.Now) { TemporaryTimeLine[j].EnoughTime = false; continue; }
+                                if (processedTask.Beginning < DateTime.Now) { processedTask.EnoughTime = false; continue; }
 
                                 InsertTask(ref TemporaryTimeLine, task, j);
 
-                                task = TemporaryTimeLine[j + 1];
-                                TemporaryTimeLine[j + 1] = null;
+                                task = nextProcessedTask;
+                                nextProcessedTask = null;
+                                TemporaryTimeLine[j + 1] = nextProcessedTask; //???????????????????????????????????????????????
+
                                 SearchLocationTask(ref TimeLine, TemporaryTimeLine, task);
                                 break;
                             }
