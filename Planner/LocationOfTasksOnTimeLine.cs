@@ -58,8 +58,10 @@ namespace Planner
                     TemporaryTimeLine[t] = TimeLine[t];
                 }
 
-                if (listTasks[i].Beginning < DateTime.Now){ listTasks[i].EnoughTime = false;}
-                else { SearchLocationTask(ref TimeLine, TemporaryTimeLine, listTasks[i]); }
+                if (NotEnoughTimeQuestion(ref listTasks[i])) { }
+                else {
+                    SearchLocationTask(ref TimeLine, TemporaryTimeLine, listTasks[i]);
+                }
             }
         }
 
@@ -67,20 +69,18 @@ namespace Planner
         {
             for (int j = 0; TemporaryTimeLine[j] != null; j++)
             {
-                Task processedTask = TemporaryTimeLine[j];
-
-                if (NoName(task, processedTask))
+                if (ExecutedFirstQuestion(task, TemporaryTimeLine[j]))
                 {
-                    if (task.Ending <= (processedTask?.Beginning ?? DateTime.Now))
+                    if (NotOverlapQuestion(task, TemporaryTimeLine[j]))
                     {
-                        if ((j == 0) || (TemporaryTimeLine[j - 1].Ending <= task.Beginning)) { 
+                        if ((j == 0) || (NotOverlapQuestion( TemporaryTimeLine[j-1], task))) 
+                        { 
                             InsertTask(ref TimeLine, task, j);
                             break; 
                         }
                         else
-                        {
-                            Task previousProcessedTask = TemporaryTimeLine[j - 1];
-                            if (previousProcessedTask.Fixed)
+                        {   
+                            if (TemporaryTimeLine[j - 1].Fixed)
                             {
                                 ShiftLocationTask(ref task , ref TemporaryTimeLine[j - 1]);
                                 SearchLocationTask(ref TimeLine, TemporaryTimeLine, task);
@@ -88,15 +88,14 @@ namespace Planner
                             }
                             else
                             {
-                                ShiftLocationTask(ref previousProcessedTask, ref task);
-
-                                if (previousProcessedTask.Beginning < DateTime.Now) { previousProcessedTask.EnoughTime = false; continue; }
+                                ShiftLocationTask(ref TemporaryTimeLine[j - 1], ref task);
+                                if (NotEnoughTimeQuestion(ref TemporaryTimeLine[j - 1])) { continue; }
 
                                 InsertTask(ref TemporaryTimeLine, task, j - 1);
 
                                 task = TemporaryTimeLine[j];
                                 TemporaryTimeLine[j] = null;
-                                SearchLocationTask(ref TimeLine, TemporaryTimeLine, previousProcessedTask);
+                                SearchLocationTask(ref TimeLine, TemporaryTimeLine, TemporaryTimeLine[j - 1]);
                                 break;
                             }
                         }
@@ -111,11 +110,12 @@ namespace Planner
                 else
                 {
                     if (TemporaryTimeLine[j + 1] == null)
-                    {
-                        Task nextProcessedTask = TemporaryTimeLine[j + 1];
-
-                        if (task.Beginning >= (TemporaryTimeLine[j]?.Ending ?? DateTime.Now)) { InsertTask(ref TimeLine, task, j + 1); break; }
-
+                    {   
+                        if (NotOverlapQuestion(TemporaryTimeLine[j], task))
+                        { 
+                            InsertTask(ref TimeLine, task, j + 1); 
+                            break; 
+                        }
                         else
                         {
                             if (TemporaryTimeLine[j].Fixed)
@@ -126,15 +126,13 @@ namespace Planner
                             }
                             else
                             {
-                                ShiftLocationTask(ref processedTask, ref task);
-
-                                if (processedTask.Beginning < DateTime.Now) { processedTask.EnoughTime = false; continue; }
+                                ShiftLocationTask(ref TemporaryTimeLine[j], ref task);
+                                if (NotEnoughTimeQuestion(ref TemporaryTimeLine[j])) { continue; }
 
                                 InsertTask(ref TemporaryTimeLine, task, j);
 
-                                task = nextProcessedTask;
-                                nextProcessedTask = null;
-                                TemporaryTimeLine[j + 1] = nextProcessedTask; //???????????????????????????????????????????????
+                                task = TemporaryTimeLine[j + 1];
+                                TemporaryTimeLine[j + 1] = null;
 
                                 SearchLocationTask(ref TimeLine, TemporaryTimeLine, task);
                                 break;
@@ -145,7 +143,28 @@ namespace Planner
             }
         }
 
-        private static bool NoName(Task task , Task task2)
+        private static bool NotOverlapQuestion(Task task1, Task task2)
+        {
+            if (task1.Ending <= (task2?.Beginning ?? DateTime.Now))
+            {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+
+        private static bool NotEnoughTimeQuestion(ref Task task)
+        {
+            if (task.Beginning < DateTime.Now)
+            {
+                task.EnoughTime = false;
+                return true;
+            }
+            return false;
+        }
+        
+        private static bool ExecutedFirstQuestion(Task task , Task task2)
         {
             if((task.Ending < (task2?.Ending ?? DateTime.Now)))
             { 
@@ -161,9 +180,6 @@ namespace Planner
 
             return false;
         }
-
-
-        // private static FindTasksNearby
 
         private static void ShiftLocationTask(ref Task shiftingTask, ref Task fixedTask)
         {
@@ -235,7 +251,7 @@ namespace Planner
         {
             RankingOfTasks.RankingByDeadLine(ref listTask);
 
-            int Difference = (int)(DateTime.Now - listTask[listTask.Length - 1].DataDeadline).TotalDays; 
+            int Difference = (int)(listTask[0].DataDeadline - DateTime.Now.AddDays(-1)).TotalDays; 
 
             return Difference;
         }
