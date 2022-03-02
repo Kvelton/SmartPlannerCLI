@@ -52,11 +52,7 @@ namespace Planner
         {
             for (int i = 0; i < listTasks.Length; i++)
             {
-                Task[] TemporaryTimeLine = new Task[TimeLine.Length];
-                for (int t = 0; t < TimeLine.Length; t++)
-                {
-                    TemporaryTimeLine[t] = TimeLine[t];
-                }
+                Task[] TemporaryTimeLine = CopyingArrayTasks(TimeLine);
 
                 if (NotEnoughTimeQuestion(ref listTasks[i])) { }
                 else {
@@ -194,11 +190,7 @@ namespace Planner
 
             if (task.EnoughTime == true)
             {
-                Task[] TemporaryTimeLine = new Task[TimeLine.Length];
-                for (int i = 0; i < TimeLine.Length; i++)
-                {
-                    TemporaryTimeLine[i] = TimeLine[i];
-                }
+                Task[] TemporaryTimeLine = CopyingArrayTasks(TimeLine);
 
                 for (int i = 0; i < TimeLine.Length; i++)
                 {
@@ -218,6 +210,16 @@ namespace Planner
                     if ((i + 1 == TimeLine.Length) || (TimeLine[i] == null)){ break;}
                 }
             }
+        }
+
+        private static Task[] CopyingArrayTasks(Task[] ArrayTasks)
+        {
+            Task[] newArrayTasks = new Task[ArrayTasks.Length];
+            for (int i = 0; i < ArrayTasks.Length; i++)
+            {
+                newArrayTasks[i] = ArrayTasks[i];
+            }
+            return newArrayTasks;
         }
 
         private static Task DailyTimeLimit(string timeStart , string timeEnd)
@@ -252,7 +254,10 @@ namespace Planner
             RankingOfTasks.RankingByDeadLine(ref listTask);
 
             int Difference = (int)(listTask[0].DataDeadline - DateTime.Now.AddDays(-1)).TotalDays; 
-
+            if (Difference < 0)
+            {
+                Difference = 0;
+            }
             return Difference;
         }
     }

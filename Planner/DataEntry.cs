@@ -13,7 +13,7 @@ namespace Planner
         {
             int taskCounter = 0;
             Task[] listTasks;
-            string locationOfInputTasks = @"D:\C#\Планировщик\EntryTask.txt";
+            string locationOfInputTasks = @"D:\Учёба\Мобильные приложения\SmartPlannerCLI\tasks.txt";
 
             using (StreamReader sr = new StreamReader(locationOfInputTasks))
             {
