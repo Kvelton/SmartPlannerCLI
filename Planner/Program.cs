@@ -1,27 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
 
 namespace Planner
 {
     internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             Task[] listTasks = DataEntry.EntryTasks();
 
             RankingOfTasks.RankingByImportance(ref listTasks);
 
-            Task[] TimeLine = LocationOfTasksOnTimeLine.SortingTask(listTasks);
+            Task[] timeLine = LocationOfTasksOnTimeLine.SortingTask(listTasks);
 
-            PrintListTasks(TimeLine, "Actual");
+            PrintListTasks(timeLine, "Actual");
             PrintListTasks(listTasks, "Overdue");
         }
 
-        public static void PrintListTasks(Task[] listTasks, string typeTask)
+        private static void PrintListTasks(Task[] listTasks, string typeTask)
         {
             switch (typeTask)
             {
@@ -43,8 +38,6 @@ namespace Planner
                         }
                         break;
                     }
-                default:
-                    break;
             }
             Console.WriteLine("-----------------------");
         }
