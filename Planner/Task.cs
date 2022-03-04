@@ -2,37 +2,53 @@
 
 namespace Planner
 {
-    internal class Task
+    public class Task
     {
-        public string Name;
-        public int TimeInMinutes;
-        public DateTime DataDeadline;
-        public byte Importance;
-        public DateTime Beginning;
-        public DateTime Ending;
-        public bool EnoughTime = true;
-        public bool Fixed = false; 
+        public string Name { get; set; }
+        public int TimeInMinutes { get; set; }
+        public DateTime DataDeadline { get; set; }
+        public byte Importance { get; set; }
+        public DateTime Beginning { get; set; }
+        public DateTime Ending { get; set; }
+        public bool EnoughTime { get; set; }
+        public bool Fixed { get; set; }
 
-        public static void PrintActual(Task task)
+        public Task()
         {
-            if (task?.Name == null) return;
-            Console.WriteLine("     Название задачи: " + task?.Name);
-            Console.WriteLine("     Потребуется минут на выполнение: " + task?.TimeInMinutes);
-            Console.WriteLine("     Важность задачи: " + task?.Importance);
-            Console.WriteLine("     Начало задачи в: " + task?.Beginning);
-            Console.WriteLine("     Конец задачи в: " + task?.Ending);
-            Console.WriteLine("     Дедлайн: " + task?.DataDeadline);
+            EnoughTime = true;
+            Fixed = false;
+        }
+
+        public Task(string name, int timeInMinutes, DateTime dataDeadline, byte importance)
+        {
+            Name = name;
+            TimeInMinutes = timeInMinutes;
+            DataDeadline = dataDeadline;
+            Importance = importance;
+            Beginning = dataDeadline.AddMinutes(-timeInMinutes);
+            Ending = dataDeadline;
+        }
+
+        public void PrintActual()
+        {
+            if (Name == null) return;
+            Console.WriteLine("     Название задачи: " + Name);
+            Console.WriteLine("     Потребуется минут на выполнение: " + TimeInMinutes);
+            Console.WriteLine("     Важность задачи: " + Importance);
+            Console.WriteLine("     Начало задачи в: " + Beginning);
+            Console.WriteLine("     Конец задачи в: " + Ending);
+            Console.WriteLine("     Дедлайн: " + DataDeadline);
             Console.WriteLine("");
         }
 
-        public static void PrintOverdue(Task task)
+        public void PrintOverdue()
         {
-            if (task.EnoughTime) return;
-            Console.WriteLine("     Название задачи: " + task?.Name);
-            Console.WriteLine("     Требовалось минут на выполнение: " + task?.TimeInMinutes);
-            Console.WriteLine("     Дедлайн был: " + task?.DataDeadline);
-            Console.WriteLine("     Важность задачи: " + task?.Importance);
-            Console.WriteLine("     Дедлайн просрочен на: " + (DateTime.Now - task?.DataDeadline) );
+            if (EnoughTime) return;
+            Console.WriteLine("     Название задачи: " + Name);
+            Console.WriteLine("     Требовалось минут на выполнение: " + TimeInMinutes);
+            Console.WriteLine("     Дедлайн был: " + DataDeadline);
+            Console.WriteLine("     Важность задачи: " + Importance);
+            Console.WriteLine("     Дедлайн просрочен на: " + (DateTime.Now - DataDeadline) );
             Console.WriteLine("");
         }
     }

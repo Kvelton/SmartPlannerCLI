@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Planner
 {
-    internal class Program
+    public static class Program
     {
-        private static void Main(string[] args)
+        public static void Main(string[] args)
         {
             Task[] listTasks = DataEntry.EntryTasks();
 
@@ -16,25 +17,25 @@ namespace Planner
             PrintListTasks(listTasks, "Overdue");
         }
 
-        private static void PrintListTasks(Task[] listTasks, string typeTask)
+        private static void PrintListTasks(IReadOnlyList<Task> listTasks, string typeTask)
         {
             switch (typeTask)
             {
                 case "Actual":
                     {
                         Console.WriteLine("Актуальные задачи: \n");
-                        for (int i = 0; i < listTasks.Length; i++)
+                        for (int i = 0; i < listTasks.Count; i++)
                         {
-                            Task.PrintActual(listTasks[i]);
+                            listTasks[i].PrintActual();
                         }
                         break;
                     }
                 case "Overdue":
                     {
                         Console.WriteLine("Просроченные задачи: \n");
-                        for (int i = 0; i < listTasks.Length; i++)
+                        for (int i = 0; i < listTasks.Count; i++)
                         {
-                            Task.PrintOverdue(listTasks[i]);
+                            listTasks[i].PrintOverdue();
                         }
                         break;
                     }

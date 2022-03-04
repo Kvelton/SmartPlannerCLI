@@ -3,7 +3,7 @@ using System.IO;
 
 namespace Planner
 {
-    internal static class DataEntry
+    public static class DataEntry
     {
         public static Task[] EntryTasks()
         {
@@ -39,23 +39,18 @@ namespace Planner
 
         private static Task ConvertingElements(string[] arrayStringElements)
         {
-            Task task = new Task();
-
-            task.Name = arrayStringElements[0];
-            task.TimeInMinutes = int.Parse(arrayStringElements[1]);
-            task.DataDeadline = Convert.ToDateTime(arrayStringElements[2]);
-            task.DataDeadline = task.DataDeadline.AddHours((Convert.ToDateTime(arrayStringElements[3])).Hour);
-            task.DataDeadline = task.DataDeadline.AddMinutes((Convert.ToDateTime(arrayStringElements[3])).Minute);
-            task.Importance = Convert.ToByte(arrayStringElements[4]);
-            task.Beginning = task.DataDeadline.AddMinutes(-task.TimeInMinutes);
-            task.Ending = task.DataDeadline;
-            
+            Task task = new Task(arrayStringElements[0],
+                int.Parse(arrayStringElements[1]),
+                Convert.ToDateTime(arrayStringElements[2])
+                    .AddHours(Convert.ToDateTime(arrayStringElements[3]).Hour)
+                    .AddMinutes(Convert.ToDateTime(arrayStringElements[3]).Minute),
+                Convert.ToByte(arrayStringElements[4]));
             return task;
         }
 
         private static string[] DivisionIntoElements(string line)
         {
-            return line.Split(new char[] { '|' });
+            return line.Split('|');
         }
 
         private static int TaskCounter(StreamReader sr)
