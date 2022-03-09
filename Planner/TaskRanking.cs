@@ -2,38 +2,38 @@
 
 namespace Planner
 {
-    internal static class RankingOfTasks
+    public static class TaskRanking
     {
-        public static Task[] RankingByImportance(ref Task[] listTasks)
+        public static void RankingByImportance(ref Task[] taskList)
         {
-            var orderedList = from task in listTasks
+            var orderedList = from task in taskList
                               orderby task.Importance descending
                               select task;
 
             int i = 0;
             foreach (Task task in orderedList)
             {
-                listTasks[i] = task;
+                taskList[i] = task;
                 i++;
             }
 
-            return listTasks;
+            //return taskList;
         }
 
-        public static Task[] RankingByDeadLine(ref Task[] listTasks)
+        public static void RankingByDeadLine(ref Task[] taskList)
         {
-            var orderedList = from task in listTasks
-                              orderby task.DataDeadline descending
+            var orderedList = from task in taskList
+                              orderby task.DateDeadline descending
                               select task;
 
             int i = 0;
             foreach (Task task in orderedList)
             {
-                listTasks[i] = task;
+                taskList[i] = task;
                 i++;
             }
 
-            return listTasks;
+            //return taskList;
         }
     }
 }

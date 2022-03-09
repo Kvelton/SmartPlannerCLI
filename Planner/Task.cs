@@ -6,7 +6,7 @@ namespace Planner
     {
         public string Name { get; set; }
         public int TimeInMinutes { get; set; }
-        public DateTime DataDeadline { get; set; }
+        public DateTime DateDeadline { get; set; }
         public byte Importance { get; set; }
         public DateTime Beginning { get; set; }
         public DateTime Ending { get; set; }
@@ -19,14 +19,14 @@ namespace Planner
             Fixed = false;
         }
 
-        public Task(string name, int timeInMinutes, DateTime dataDeadline, byte importance)
+        public Task(string name, int timeInMinutes, DateTime dateDeadline, byte importance)
         {
             Name = name;
             TimeInMinutes = timeInMinutes;
-            DataDeadline = dataDeadline;
+            DateDeadline = dateDeadline;
             Importance = importance;
-            Beginning = dataDeadline.AddMinutes(-timeInMinutes);
-            Ending = dataDeadline;
+            Beginning = dateDeadline.AddMinutes(-timeInMinutes);
+            Ending = dateDeadline;
         }
 
         public void PrintActual()
@@ -37,7 +37,7 @@ namespace Planner
             Console.WriteLine("     Важность задачи: " + Importance);
             Console.WriteLine("     Начало задачи в: " + Beginning);
             Console.WriteLine("     Конец задачи в: " + Ending);
-            Console.WriteLine("     Дедлайн: " + DataDeadline);
+            Console.WriteLine("     Дедлайн: " + DateDeadline);
             Console.WriteLine("");
         }
 
@@ -46,9 +46,9 @@ namespace Planner
             if (EnoughTime) return;
             Console.WriteLine("     Название задачи: " + Name);
             Console.WriteLine("     Требовалось минут на выполнение: " + TimeInMinutes);
-            Console.WriteLine("     Дедлайн был: " + DataDeadline);
+            Console.WriteLine("     Дедлайн был: " + DateDeadline);
             Console.WriteLine("     Важность задачи: " + Importance);
-            Console.WriteLine("     Дедлайн просрочен на: " + (DateTime.Now - DataDeadline) );
+            Console.WriteLine("     Дедлайн просрочен на: " + (DateTime.Now - DateDeadline) );
             Console.WriteLine("");
         }
     }

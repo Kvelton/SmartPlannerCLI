@@ -2,33 +2,33 @@
 
 namespace Planner
 {
-    internal static class LocationOfTasksOnTimeLine
+    public static class LocationOfTasksOnTimeLine
     {
-        public static Task[] SortingTask(Task[] listTasks)
+        public static Task[] SortingTask(Task[] taskList)
         {
             Task blockTime = InputDailyTimeLimit();
-            var timeLine = AddBlockingTime(blockTime, listTasks);
+            var timeLine = AddBlockingTime(blockTime, taskList);
 
-            OffsetTask(ref listTasks, ref timeLine); 
+            OffsetTask(ref taskList, ref timeLine); 
 
             return timeLine;
         }
 
-        private static Task[] AddBlockingTime(Task blockTime, Task[]listTasks)
+        private static Task[] AddBlockingTime(Task blockTime, Task[] taskList)
         {
-            Task[] timeLine = new Task[listTasks.Length + LengthTimeLIne(listTasks)];
+            Task[] timeLine = new Task[taskList.Length + TimeLineLength(taskList)];
 
-            for (int i = 0; i < LengthTimeLIne(listTasks); i++)
+            for (int i = 0; i < TimeLineLength(taskList); i++)
             {
                 timeLine[i] = new Task
                 {
-                    DataDeadline = blockTime.DataDeadline,
+                    DateDeadline = blockTime.DateDeadline,
                     Beginning = blockTime.Beginning,
                     Ending = blockTime.Ending,
                     Fixed = true
                 };
 
-                blockTime.DataDeadline = blockTime.DataDeadline.AddDays(1);
+                blockTime.DateDeadline = blockTime.DateDeadline.AddDays(1);
                 blockTime.Beginning = blockTime.Beginning.AddDays(1);
                 blockTime.Ending = blockTime.Ending.AddDays(1);
             }
@@ -44,20 +44,20 @@ namespace Planner
             return DailyTimeLimit(Console.ReadLine(), Console.ReadLine());
         }
 
-        private static void OffsetTask(ref Task[] listTasks, ref Task[] timeLine) // переписать название функции
+        private static void OffsetTask(ref Task[] taskList, ref Task[] timeLine) // переписать название функции
         {
-            for (int i = 0; i < listTasks.Length; i++)
+            for (int i = 0; i < taskList.Length; i++)
             {
-                Task[] temporaryTimeLine = CopyingArrayTasks(timeLine);
+                Task[] temporaryTimeLine = CopyTaskList(timeLine);
 
-                if (NotEnoughTimeQuestion(ref listTasks[i])) { }
+                if (NotEnoughTimeQuestion(ref taskList[i])) { }
                 else {
-                    SearchLocationTask(ref timeLine, temporaryTimeLine, listTasks[i]);
+                    SearchTaskLocation(ref timeLine, temporaryTimeLine, taskList[i]);
                 }
             }
         }
 
-        private static void SearchLocationTask(ref Task[] timeLine, Task[] temporaryTimeLine, Task task) // разбить её на под функции 
+        private static void SearchTaskLocation(ref Task[] timeLine, Task[] temporaryTimeLine, Task task) // разбить её на под функции 
         {
             for (int j = 0; temporaryTimeLine[j] != null; j++)
             {
@@ -74,7 +74,7 @@ namespace Planner
                         if (temporaryTimeLine[j - 1].Fixed)
                         {
                             ShiftLocationTask(ref task , ref temporaryTimeLine[j - 1]);
-                            SearchLocationTask(ref timeLine, temporaryTimeLine, task);
+                            SearchTaskLocation(ref timeLine, temporaryTimeLine, task);
                             break;
                         }
 
@@ -85,12 +85,12 @@ namespace Planner
 
                         task = temporaryTimeLine[j];
                         temporaryTimeLine[j] = null;
-                        SearchLocationTask(ref timeLine, temporaryTimeLine, temporaryTimeLine[j - 1]);
+                        SearchTaskLocation(ref timeLine, temporaryTimeLine, temporaryTimeLine[j - 1]);
                         break;
                     }
 
                     ShiftLocationTask(ref task, ref temporaryTimeLine[j]);
-                    SearchLocationTask(ref timeLine, temporaryTimeLine, task);
+                    SearchTaskLocation(ref timeLine, temporaryTimeLine, task);
                     break;
                 }
 
@@ -104,7 +104,7 @@ namespace Planner
                 if (temporaryTimeLine[j].Fixed)
                 {
                     ShiftLocationTask(ref task, ref temporaryTimeLine[j]);
-                    SearchLocationTask(ref timeLine, temporaryTimeLine, task);
+                    SearchTaskLocation(ref timeLine, temporaryTimeLine, task);
                     break;
                 }
 
@@ -116,7 +116,7 @@ namespace Planner
                 task = temporaryTimeLine[j + 1];
                 temporaryTimeLine[j + 1] = null;
 
-                SearchLocationTask(ref timeLine, temporaryTimeLine, task);
+                SearchTaskLocation(ref timeLine, temporaryTimeLine, task);
                 break;
             }
         }
@@ -156,7 +156,7 @@ namespace Planner
             bool offset = false;
 
             if (task.EnoughTime != true) return;
-            Task[] temporaryTimeLine = CopyingArrayTasks(timeLine);
+            Task[] temporaryTimeLine = CopyTaskList(timeLine);
 
             for (int i = 0; i < timeLine.Length; i++)
             {
@@ -177,14 +177,14 @@ namespace Planner
             }
         }
 
-        private static Task[] CopyingArrayTasks(Task[] arrayTasks)
+        private static Task[] CopyTaskList(Task[] taskList)
         {
-            Task[] newArrayTasks = new Task[arrayTasks.Length];
-            for (int i = 0; i < arrayTasks.Length; i++)
+            Task[] newTaskList = new Task[taskList.Length];
+            for (int i = 0; i < taskList.Length; i++)
             {
-                newArrayTasks[i] = arrayTasks[i];
+                newTaskList[i] = taskList[i];
             }
-            return newArrayTasks;
+            return newTaskList;
         }
 
         private static Task DailyTimeLimit(string timeStart , string timeEnd)
@@ -195,13 +195,13 @@ namespace Planner
             blockedTime.Beginning = blockedTime.Beginning.AddHours((Convert.ToDateTime(timeEnd)).Hour);
             blockedTime.Beginning = blockedTime.Beginning.AddMinutes((Convert.ToDateTime(timeEnd)).Minute);
 
-            blockedTime.DataDeadline = DateTime.Today;
-            blockedTime.DataDeadline = blockedTime.DataDeadline.AddHours((Convert.ToDateTime(timeStart)).Hour);
-            blockedTime.DataDeadline = blockedTime.DataDeadline.AddMinutes((Convert.ToDateTime(timeStart)).Minute);
+            blockedTime.DateDeadline = DateTime.Today;
+            blockedTime.DateDeadline = blockedTime.DateDeadline.AddHours((Convert.ToDateTime(timeStart)).Hour);
+            blockedTime.DateDeadline = blockedTime.DateDeadline.AddMinutes((Convert.ToDateTime(timeStart)).Minute);
 
             BlockedTimeInOneDay(ref blockedTime);
 
-            blockedTime.Ending = blockedTime.DataDeadline;
+            blockedTime.Ending = blockedTime.DateDeadline;
             blockedTime.Fixed = true;
 
             return blockedTime;
@@ -209,16 +209,16 @@ namespace Planner
 
         private static void BlockedTimeInOneDay(ref Task blockedTime)
         {
-            if (blockedTime.DataDeadline < blockedTime.Beginning)
+            if (blockedTime.DateDeadline < blockedTime.Beginning)
             {
-                blockedTime.DataDeadline = blockedTime.DataDeadline.AddDays(1);
+                blockedTime.DateDeadline = blockedTime.DateDeadline.AddDays(1);
             }
         }
-        private static int LengthTimeLIne(Task[] listTask)
+        private static int TimeLineLength(Task[] listTask)
         {
-            RankingOfTasks.RankingByDeadLine(ref listTask);
+            TaskRanking.RankingByDeadLine(ref listTask);
 
-            int difference = (int)(listTask[0].DataDeadline - DateTime.Now.AddDays(-1)).TotalDays; 
+            int difference = (int)(listTask[0].DateDeadline - DateTime.Now.AddDays(-1)).TotalDays; 
             if (difference < 0)
             {
                 difference = 0;

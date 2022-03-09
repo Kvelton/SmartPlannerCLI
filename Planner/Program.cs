@@ -7,35 +7,35 @@ namespace Planner
     {
         public static void Main(string[] args)
         {
-            Task[] listTasks = DataEntry.EntryTasks();
+            Task[] taskList = DataEntry.TaskInput();
 
-            RankingOfTasks.RankingByImportance(ref listTasks);
+            TaskRanking.RankingByImportance(ref taskList);
 
-            Task[] timeLine = LocationOfTasksOnTimeLine.SortingTask(listTasks);
+            Task[] timeLine = LocationOfTasksOnTimeLine.SortingTask(taskList);
 
-            PrintListTasks(timeLine, "Actual");
-            PrintListTasks(listTasks, "Overdue");
+            PrintTaskList(timeLine, "Actual");
+            PrintTaskList(taskList, "Overdue");
         }
 
-        private static void PrintListTasks(IReadOnlyList<Task> listTasks, string typeTask)
+        private static void PrintTaskList(IReadOnlyList<Task> taskList, string taskType)
         {
-            switch (typeTask)
+            switch (taskType)
             {
                 case "Actual":
                     {
                         Console.WriteLine("Актуальные задачи: \n");
-                        for (int i = 0; i < listTasks.Count; i++)
+                        for (int i = 0; i < taskList.Count; i++)
                         {
-                            listTasks[i].PrintActual();
+                            taskList[i].PrintActual();
                         }
                         break;
                     }
                 case "Overdue":
                     {
                         Console.WriteLine("Просроченные задачи: \n");
-                        for (int i = 0; i < listTasks.Count; i++)
+                        for (int i = 0; i < taskList.Count; i++)
                         {
-                            listTasks[i].PrintOverdue();
+                            taskList[i].PrintOverdue();
                         }
                         break;
                     }

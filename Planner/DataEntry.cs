@@ -5,29 +5,29 @@ namespace Planner
 {
     public static class DataEntry
     {
-        public static Task[] EntryTasks()
+        public static Task[] TaskInput()
         {
             int taskCounter = 0;
-            Task[] listTasks;
-            string locationOfInputTasks = @"D:\Учёба\Мобильные приложения\SmartPlannerCLI\tasks.txt";
+            Task[] taskList;
+            string taskPath = @"D:\Учёба\Мобильные приложения\SmartPlannerCLI\tasks.txt";
 
-            using (StreamReader sr = new StreamReader(locationOfInputTasks))
+            using (StreamReader sr = new StreamReader(taskPath))
             {
-                listTasks = new Task[TaskCounter(sr)];
+                taskList = new Task[TaskCounter(sr)];
             }
 
-            using (StreamReader sr = new StreamReader(locationOfInputTasks))
+            using (StreamReader sr = new StreamReader(taskPath))
             {
                 string line;
 
                 while ((line = sr.ReadLine()) != null)
                 {
-                    listTasks[taskCounter] = ConversionLineToVar(line);
+                    taskList[taskCounter] = ConversionLineToVar(line);
                     taskCounter++;
                 }
             }
 
-            return listTasks;
+            return taskList;
         }
 
         private static Task ConversionLineToVar(string line)
