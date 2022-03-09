@@ -1,50 +1,44 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
 
 namespace Planner
 {
-    internal class Program
+    public static class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
-            Task[] listTasks = DataEntry.EntryTasks();
+            Task[] taskList = DataEntry.TaskInput();
 
-            RankingOfTasks.RankingByImportance(ref listTasks);
+            TaskRanking.RankingByImportance(ref taskList);
 
-            Task[] TimeLine = LocationOfTasksOnTimeLine.SortingTask(listTasks);
+            Task[] timeLine = LocationOfTasksOnTimeLine.SortingTask(taskList);
 
-            PrintListTasks(TimeLine, "Actual");
-            PrintListTasks(listTasks, "Overdue");
+            PrintTaskList(timeLine, "Actual");
+            PrintTaskList(taskList, "Overdue");
         }
 
-        public static void PrintListTasks(Task[] listTasks, string typeTask)
+        private static void PrintTaskList(IReadOnlyList<Task> taskList, string taskType)
         {
-            switch (typeTask)
+            switch (taskType)
             {
                 case "Actual":
                     {
                         Console.WriteLine("Актуальные задачи: \n");
-                        for (int i = 0; i < listTasks.Length; i++)
+                        for (int i = 0; i < taskList.Count; i++)
                         {
-                            Task.PrintActual(listTasks[i]);
+                            taskList[i].PrintActual();
                         }
                         break;
                     }
                 case "Overdue":
                     {
                         Console.WriteLine("Просроченные задачи: \n");
-                        for (int i = 0; i < listTasks.Length; i++)
+                        for (int i = 0; i < taskList.Count; i++)
                         {
-                            Task.PrintOverdue(listTasks[i]);
+                            taskList[i].PrintOverdue();
                         }
                         break;
                     }
-                default:
-                    break;
             }
             Console.WriteLine("-----------------------");
         }
