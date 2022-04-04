@@ -19,7 +19,7 @@ namespace Planner
 
         public static void PrintActual(Task task)
         {
-            if (task?.Name != null) { 
+            if (task?.Name != null) {
                 Console.WriteLine("     Название задачи: " + task?.Name);
                 Console.WriteLine("     Потребуется минут на выполнение: " + task?.TimeInMinutes);
                 Console.WriteLine("     Важность задачи: " + task?.Importance);

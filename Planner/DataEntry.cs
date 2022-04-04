@@ -13,7 +13,7 @@ namespace Planner
         {
             int taskCounter = 0;
             Task[] listTasks;
-            string locationOfInputTasks = @"D:\Учёба\Мобильные приложения\SmartPlannerCLI\tasks.txt";
+            string locationOfInputTasks = @"D:\C#\Планировщик\EntryTask.txt";
 
             using (StreamReader sr = new StreamReader(locationOfInputTasks))
             {
@@ -23,7 +23,6 @@ namespace Planner
             using (StreamReader sr = new StreamReader(locationOfInputTasks))
             {
                 string line;
-
                 while ((line = sr.ReadLine()) != null)
                 {
                     listTasks[taskCounter] = ConversionLineToVar(line);
@@ -34,7 +33,7 @@ namespace Planner
             return listTasks;
         }
 
-        private static Task ConversionLineToVar(string line)
+        public static Task ConversionLineToVar(string line)
         {
             string[] arrayStringElements = DivisionIntoElements(line);
 

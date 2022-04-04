@@ -42,10 +42,11 @@ namespace Planner
 
         private static Task InputDailyTimeLimit()
         {
-            Console.WriteLine("Введите время выполнения c XX:XX");
-            Console.WriteLine("по XX:XX");
-  
-            return DailyTimeLimit(Console.ReadLine(), Console.ReadLine());
+            /*            Console.WriteLine("Введите время выполнения c XX:XX");
+                        Console.WriteLine("по XX:XX");
+
+                        return DailyTimeLimit(Console.ReadLine(), Console.ReadLine());*/
+            return DailyTimeLimit("17:00", "21:00");
         }
 
         private static void OffsetTask(ref Task[] listTasks, ref Task[] TimeLine) // переписать название функции

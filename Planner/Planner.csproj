@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="WriteData.cs" />
     <Compile Include="DataEntry.cs" />
     <Compile Include="LocationOfTasksOnTimeLine.cs" />
     <Compile Include="Program.cs" />
