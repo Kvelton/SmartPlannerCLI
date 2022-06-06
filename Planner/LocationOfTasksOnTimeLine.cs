@@ -6,38 +6,38 @@ using System.Threading.Tasks;
 
 namespace Planner
 {
-    internal class LocationOfTasksOnTimeLine
+    public class LocationOfTasksOnTimeLine
     {
         public static Task[] SortingTask(Task[] listTasks)
         {
-            Task[] TimeLine;
+            Task[] timeLine;
 
-            Task BlockTime = InputDailyTimeLimit();
-            TimeLine = AddBlokingTime(BlockTime, listTasks);
+            Task blockTime = InputDailyTimeLimit();
+            timeLine = AddBlokingTime(blockTime, listTasks);
 
-            OffsetTask(ref listTasks, ref TimeLine); 
+            OffsetTask(ref listTasks, ref timeLine); 
 
-            return TimeLine;
+            return timeLine;
         }
 
-        private static Task[] AddBlokingTime(Task BlockTime, Task[]listTasks)
+        private static Task[] AddBlokingTime(Task blockTime, Task[]listTasks)
         {
-            Task[] TimeLine = new Task[listTasks.Length + LengthTimeLIne(listTasks)];
+            Task[] timeLine = new Task[listTasks.Length + LengthTimeLIne(listTasks)];
 
             for (int i = 0; i < LengthTimeLIne(listTasks); i++)
             {
-                TimeLine[i] = new Task();
-                TimeLine[i].DataDeadline = BlockTime.DataDeadline;
-                TimeLine[i].Beginning = BlockTime.Beginning;
-                TimeLine[i].Ending = BlockTime.Ending;
-                TimeLine[i].Fixed = true;
+                timeLine[i] = new Task();
+                timeLine[i].dataDeadline = blockTime.dataDeadline;
+                timeLine[i].beginning = blockTime.beginning;
+                timeLine[i].ending = blockTime.ending;
+                timeLine[i].@fixed = true;
 
-                BlockTime.DataDeadline = BlockTime.DataDeadline.AddDays(1);
-                BlockTime.Beginning = BlockTime.Beginning.AddDays(1);
-                BlockTime.Ending = BlockTime.Ending.AddDays(1);
+                blockTime.dataDeadline = blockTime.dataDeadline.AddDays(1);
+                blockTime.beginning = blockTime.beginning.AddDays(1);
+                blockTime.ending = blockTime.ending.AddDays(1);
             }
 
-            return TimeLine;
+            return timeLine;
         }
 
         private static Task InputDailyTimeLimit()
@@ -49,89 +49,89 @@ namespace Planner
             return DailyTimeLimit("17:00", "21:00");
         }
 
-        private static void OffsetTask(ref Task[] listTasks, ref Task[] TimeLine) // переписать название функции
+        private static void OffsetTask(ref Task[] listTasks, ref Task[] timeLine) // переписать название функции
         {
             for (int i = 0; i < listTasks.Length; i++)
             {
-                Task[] TemporaryTimeLine = CopyingArrayTasks(TimeLine);
+                Task[] temporaryTimeLine = CopyingArrayTasks(timeLine);
 
                 if (NotEnoughTimeQuestion(ref listTasks[i])) { }
                 else {
-                    SearchLocationTask(ref TimeLine, TemporaryTimeLine, listTasks[i]);
+                    SearchLocationTask(ref timeLine, temporaryTimeLine, listTasks[i]);
                 }
             }
         }
 
-        private static void SearchLocationTask(ref Task[] TimeLine, Task[] TemporaryTimeLine, Task task) // разбить её на под функции 
+        private static void SearchLocationTask(ref Task[] timeLine, Task[] temporaryTimeLine, Task task) // разбить её на под функции 
         {
-            for (int j = 0; TemporaryTimeLine[j] != null; j++)
+            for (int j = 0; temporaryTimeLine[j] != null; j++)
             {
-                if (ExecutedFirstQuestion(task, TemporaryTimeLine[j]))
+                if (ExecutedFirstQuestion(task, temporaryTimeLine[j]))
                 {
-                    if (NotOverlapQuestion(task, TemporaryTimeLine[j]))
+                    if (NotOverlapQuestion(task, temporaryTimeLine[j]))
                     {
-                        if ((j == 0) || (NotOverlapQuestion( TemporaryTimeLine[j-1], task))) 
+                        if ((j == 0) || (NotOverlapQuestion( temporaryTimeLine[j-1], task))) 
                         { 
-                            InsertTask(ref TimeLine, task, j);
+                            InsertTask(ref timeLine, task, j);
                             break; 
                         }
                         else
                         {   
-                            if (TemporaryTimeLine[j - 1].Fixed)
+                            if (temporaryTimeLine[j - 1].@fixed)
                             {
-                                ShiftLocationTask(ref task , ref TemporaryTimeLine[j - 1]);
-                                SearchLocationTask(ref TimeLine, TemporaryTimeLine, task);
+                                ShiftLocationTask(ref task , ref temporaryTimeLine[j - 1]);
+                                SearchLocationTask(ref timeLine, temporaryTimeLine, task);
                                 break;
                             }
                             else
                             {
-                                ShiftLocationTask(ref TemporaryTimeLine[j - 1], ref task);
-                                if (NotEnoughTimeQuestion(ref TemporaryTimeLine[j - 1])) { continue; }
+                                ShiftLocationTask(ref temporaryTimeLine[j - 1], ref task);
+                                if (NotEnoughTimeQuestion(ref temporaryTimeLine[j - 1])) { continue; }
 
-                                InsertTask(ref TemporaryTimeLine, task, j - 1);
+                                InsertTask(ref temporaryTimeLine, task, j - 1);
 
-                                task = TemporaryTimeLine[j];
-                                TemporaryTimeLine[j] = null;
-                                SearchLocationTask(ref TimeLine, TemporaryTimeLine, TemporaryTimeLine[j - 1]);
+                                task = temporaryTimeLine[j];
+                                temporaryTimeLine[j] = null;
+                                SearchLocationTask(ref timeLine, temporaryTimeLine, temporaryTimeLine[j - 1]);
                                 break;
                             }
                         }
                     }
                     else
                     {
-                        ShiftLocationTask(ref task, ref TemporaryTimeLine[j]);
-                        SearchLocationTask(ref TimeLine, TemporaryTimeLine, task);
+                        ShiftLocationTask(ref task, ref temporaryTimeLine[j]);
+                        SearchLocationTask(ref timeLine, temporaryTimeLine, task);
                         break;
                     }
                 }
                 else
                 {
-                    if (TemporaryTimeLine[j + 1] == null)
+                    if (temporaryTimeLine[j + 1] == null)
                     {   
-                        if (NotOverlapQuestion(TemporaryTimeLine[j], task))
+                        if (NotOverlapQuestion(temporaryTimeLine[j], task))
                         { 
-                            InsertTask(ref TimeLine, task, j + 1); 
+                            InsertTask(ref timeLine, task, j + 1); 
                             break; 
                         }
                         else
                         {
-                            if (TemporaryTimeLine[j].Fixed)
+                            if (temporaryTimeLine[j].@fixed)
                             {
-                                ShiftLocationTask(ref task, ref TemporaryTimeLine[j]);
-                                SearchLocationTask(ref TimeLine, TemporaryTimeLine, task);
+                                ShiftLocationTask(ref task, ref temporaryTimeLine[j]);
+                                SearchLocationTask(ref timeLine, temporaryTimeLine, task);
                                 break;
                             }
                             else
                             {
-                                ShiftLocationTask(ref TemporaryTimeLine[j], ref task);
-                                if (NotEnoughTimeQuestion(ref TemporaryTimeLine[j])) { continue; }
+                                ShiftLocationTask(ref temporaryTimeLine[j], ref task);
+                                if (NotEnoughTimeQuestion(ref temporaryTimeLine[j])) { continue; }
 
-                                InsertTask(ref TemporaryTimeLine, task, j);
+                                InsertTask(ref temporaryTimeLine, task, j);
 
-                                task = TemporaryTimeLine[j + 1];
-                                TemporaryTimeLine[j + 1] = null;
+                                task = temporaryTimeLine[j + 1];
+                                temporaryTimeLine[j + 1] = null;
 
-                                SearchLocationTask(ref TimeLine, TemporaryTimeLine, task);
+                                SearchLocationTask(ref timeLine, temporaryTimeLine, task);
                                 break;
                             }
                         }
@@ -140,9 +140,9 @@ namespace Planner
             }
         }
 
-        private static bool NotOverlapQuestion(Task task1, Task task2)
+        public static bool NotOverlapQuestion(Task task1, Task task2)
         {
-            if (task1.Ending <= (task2?.Beginning ?? DateTime.Now))
+            if (task1.ending <= (task2?.beginning ?? DateTime.Now))
             {
                 return true;
             }
@@ -153,9 +153,9 @@ namespace Planner
 
         private static bool NotEnoughTimeQuestion(ref Task task)
         {
-            if (task.Beginning < DateTime.Now)
+            if (task.beginning < DateTime.Now)
             {
-                task.EnoughTime = false;
+                task.enoughTime = false;
                 return true;
             }
             return false;
@@ -163,13 +163,13 @@ namespace Planner
         
         private static bool ExecutedFirstQuestion(Task task , Task task2)
         {
-            if((task.Ending < (task2?.Ending ?? DateTime.Now)))
+            if((task.ending < (task2?.ending ?? DateTime.Now)))
             { 
                  return true;
             }
 
-            if (task.Ending == (task2?.Ending ?? DateTime.Now)){
-                if ((task.Importance >= (task2?.Importance ?? task.Importance + 1)))
+            if (task.ending == (task2?.ending ?? DateTime.Now)){
+                if ((task.importance >= (task2?.importance ?? task.importance + 1)))
                 {
                     return true;
                 }
@@ -180,81 +180,81 @@ namespace Planner
 
         private static void ShiftLocationTask(ref Task shiftingTask, ref Task fixedTask)
         {
-            var timeDifference = - fixedTask.Beginning.Subtract(shiftingTask.Ending);
-            shiftingTask.Ending = shiftingTask.Ending.Subtract(timeDifference);
-            shiftingTask.Beginning = shiftingTask.Beginning.Subtract(timeDifference);
+            var timeDifference = - fixedTask.beginning.Subtract(shiftingTask.ending);
+            shiftingTask.ending = shiftingTask.ending.Subtract(timeDifference);
+            shiftingTask.beginning = shiftingTask.beginning.Subtract(timeDifference);
         }
 
-        private static void InsertTask(ref Task[] TimeLine, Task task, int index) // Разбить функцию на под функцию
+        private static void InsertTask(ref Task[] timeLine, Task task, int index) // Разбить функцию на под функцию
         {
             bool offset = false;
 
-            if (task.EnoughTime == true)
+            if (task.enoughTime == true)
             {
-                Task[] TemporaryTimeLine = CopyingArrayTasks(TimeLine);
+                Task[] temporaryTimeLine = CopyingArrayTasks(timeLine);
 
-                for (int i = 0; i < TimeLine.Length; i++)
+                for (int i = 0; i < timeLine.Length; i++)
                 {
                     if (i == index)
                     {
-                        TimeLine[i] = task;
+                        timeLine[i] = task;
                         offset = true;
                         continue;
                     }
 
                     if (offset == true)
                     {
-                        TimeLine[i] = TemporaryTimeLine[i - 1];
+                        timeLine[i] = temporaryTimeLine[i - 1];
                         continue;
                     }
 
-                    if ((i + 1 == TimeLine.Length) || (TimeLine[i] == null)){ break;}
+                    if ((i + 1 == timeLine.Length) || (timeLine[i] == null)){ break;}
                 }
             }
         }
 
-        private static Task[] CopyingArrayTasks(Task[] ArrayTasks)
+        private static Task[] CopyingArrayTasks(Task[] arrayTasks)
         {
-            Task[] newArrayTasks = new Task[ArrayTasks.Length];
-            for (int i = 0; i < ArrayTasks.Length; i++)
+            Task[] newArrayTasks = new Task[arrayTasks.Length];
+            for (int i = 0; i < arrayTasks.Length; i++)
             {
-                newArrayTasks[i] = ArrayTasks[i];
+                newArrayTasks[i] = arrayTasks[i];
             }
             return newArrayTasks;
         }
 
         private static Task DailyTimeLimit(string timeStart , string timeEnd)
         {
-            Task BlockedTime = new Task();
+            Task blockedTime = new Task();
 
-            BlockedTime.Beginning = DateTime.Today;
-            BlockedTime.Beginning = BlockedTime.Beginning.AddHours((Convert.ToDateTime(timeEnd)).Hour);
-            BlockedTime.Beginning = BlockedTime.Beginning.AddMinutes((Convert.ToDateTime(timeEnd)).Minute);
+            blockedTime.beginning = DateTime.Today;
+            blockedTime.beginning = blockedTime.beginning.AddHours((Convert.ToDateTime(timeEnd)).Hour);
+            blockedTime.beginning = blockedTime.beginning.AddMinutes((Convert.ToDateTime(timeEnd)).Minute);
 
-            BlockedTime.DataDeadline = DateTime.Today;
-            BlockedTime.DataDeadline = BlockedTime.DataDeadline.AddHours((Convert.ToDateTime(timeStart)).Hour);
-            BlockedTime.DataDeadline = BlockedTime.DataDeadline.AddMinutes((Convert.ToDateTime(timeStart)).Minute);
+            blockedTime.dataDeadline = DateTime.Today;
+            blockedTime.dataDeadline = blockedTime.dataDeadline.AddHours((Convert.ToDateTime(timeStart)).Hour);
+            blockedTime.dataDeadline = blockedTime.dataDeadline.AddMinutes((Convert.ToDateTime(timeStart)).Minute);
 
-            BlockedTimeInOneDay(ref BlockedTime);
+            BlockedTimeInOneDay(ref blockedTime);
 
-            BlockedTime.Ending = BlockedTime.DataDeadline;
-            BlockedTime.Fixed = true;
+            blockedTime.ending = blockedTime.dataDeadline;
+            blockedTime.@fixed = true;
 
-            return BlockedTime;
+            return blockedTime;
         }
 
-        private static void BlockedTimeInOneDay(ref Task BlockedTime)
+        private static void BlockedTimeInOneDay(ref Task blockedTime)
         {
-            if (BlockedTime.DataDeadline < BlockedTime.Beginning)
+            if (blockedTime.dataDeadline < blockedTime.beginning)
             {
-                BlockedTime.DataDeadline = BlockedTime.DataDeadline.AddDays(1);
+                blockedTime.dataDeadline = blockedTime.dataDeadline.AddDays(1);
             }
         }
         private static int LengthTimeLIne(Task[] listTask)
         {
             RankingOfTasks.RankingByDeadLine(ref listTask);
 
-            int Difference = (int)(listTask[0].DataDeadline - DateTime.Now.AddDays(-1)).TotalDays; 
+            int Difference = (int)(listTask[0].dataDeadline - DateTime.Now.AddDays(-1)).TotalDays; 
             if (Difference < 0)
             {
                 Difference = 0;

@@ -7,29 +7,29 @@ using System.IO;
 
 namespace Planner
 {
-    internal class WriteData
+    public class WriteData
     {
-         static public void WriteTask(Task[] Tasks)
+        public static void WriteTask(Task[] tasks)
         {
             string locationOfInputTasks = @"D:\C#\Планировщик\EntryTask.txt";
 
             using (StreamWriter writer = new StreamWriter(locationOfInputTasks, false))
             {
-                for (int i = Tasks.Length-1; i >= 0; i--)
+                for (int i = tasks.Length-1; i >= 0; i--)
                 {
-                    if (Tasks[i]?.Name != null)
+                    if (tasks[i]?.name != null)
                     {
-                        writer.WriteLine(PrepareTaskForWriter(Tasks[i]));
+                        writer.WriteLine(PrepareTaskForWriter(tasks[i]));
                     }
                 }
             }
         }
 
-        static private string PrepareTaskForWriter(Task task)
+        public static string PrepareTaskForWriter(Task task)
         {
             string stringTask;
 
-            stringTask = task.Name + "|" + task.TimeInMinutes + "|" + task.DataDeadline.ToShortDateString() + "|" + task.DataDeadline.ToShortTimeString() + "|" + task.Importance;
+            stringTask = task.name + "|" + task.timeInMinutes + "|" + task.dataDeadline.ToShortDateString() + "|" + task.dataDeadline.ToShortTimeString() + "|" + task.importance;
 
             return stringTask;
         }

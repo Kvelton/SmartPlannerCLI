@@ -7,7 +7,7 @@ using System.IO;
 
 namespace Planner
 {
-    internal class Program
+    public class Program
     {
         static void Main(string[] args)
         {
@@ -18,8 +18,8 @@ namespace Planner
 
         private static void WaitingCommand()
         {
-            bool Stop = false;
-            while (!Stop)
+            bool stop = false;
+            while (!stop)
             {
 
                 Console.WriteLine("Выберите действие: Обновить/Удалить/Изменить/Добавить/Закончить");
@@ -39,7 +39,7 @@ namespace Planner
                         AddTask();
                         break;
                     case "Закончить":
-                        Stop = true;
+                        stop = true;
                         break;
 
                     default:
@@ -55,16 +55,16 @@ namespace Planner
 
             RankingOfTasks.RankingByImportance(ref listTasks);
 
-            Task[] TimeLine = LocationOfTasksOnTimeLine.SortingTask(listTasks);
+            Task[] timeLine = LocationOfTasksOnTimeLine.SortingTask(listTasks);
 
-            PrintListTasks(TimeLine, "Actual");
+            PrintListTasks(timeLine, "Actual");
             PrintListTasks(listTasks, "Overdue");
 
             WriteData.WriteTask(listTasks);
         }
         private static void DeletingTask()
         {
-            bool TaskNotFound = true;
+            bool taskNotFound = true;
             Console.WriteLine("Введите название задачи которую хотите удалить:");
             string nameTask = Console.ReadLine();
 
@@ -72,14 +72,14 @@ namespace Planner
 
             for (int i = 0; i < listTasks.Length; i++)
             {
-                if (nameTask == listTasks[i].Name)
+                if (nameTask == listTasks[i].name)
                 {
                     listTasks[i]=null;
-                    TaskNotFound = false;
+                    taskNotFound = false;
                     Console.WriteLine("Задача удалена");
                 }
             }
-            if (TaskNotFound)
+            if (taskNotFound)
             {
                 Console.WriteLine("Задачи с таким названием нет");
             }
@@ -87,14 +87,15 @@ namespace Planner
             WriteData.WriteTask(listTasks);
         }
 
-        private static void AddTask()
+        public static void AddTask()
         {
             List<Task> listTasks = DataEntry.EntryTasks().ToList();
 
             listTasks.Add(DataEntry.ConversionLineToVar(Console.ReadLine()));
+            
             WriteData.WriteTask(listTasks.ToArray());
         }
-        private static void EditTask()
+        public static void EditTask()
         {
 
         }

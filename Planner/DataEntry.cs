@@ -7,7 +7,7 @@ using System.IO;
 
 namespace Planner
 {
-    internal class DataEntry
+    public class DataEntry
     {
         public static Task[] EntryTasks()
         {
@@ -44,21 +44,21 @@ namespace Planner
         {
             Task task = new Task();
 
-            task.Name = arrayStringElements[0];
-            task.TimeInMinutes = int.Parse(arrayStringElements[1]);
-            task.DataDeadline = Convert.ToDateTime(arrayStringElements[2]);
-            task.DataDeadline = task.DataDeadline.AddHours((Convert.ToDateTime(arrayStringElements[3])).Hour);
-            task.DataDeadline = task.DataDeadline.AddMinutes((Convert.ToDateTime(arrayStringElements[3])).Minute);
-            task.Importance = Convert.ToByte(arrayStringElements[4]);
-            task.Beginning = task.DataDeadline.AddMinutes(-task.TimeInMinutes);
-            task.Ending = task.DataDeadline;
+            task.name = arrayStringElements[0];
+            task.timeInMinutes = int.Parse(arrayStringElements[1]);
+            task.dataDeadline = Convert.ToDateTime(arrayStringElements[2]);
+            task.dataDeadline = task.dataDeadline.AddHours((Convert.ToDateTime(arrayStringElements[3])).Hour);
+            task.dataDeadline = task.dataDeadline.AddMinutes((Convert.ToDateTime(arrayStringElements[3])).Minute);
+            task.importance = Convert.ToByte(arrayStringElements[4]);
+            task.beginning = task.dataDeadline.AddMinutes(-task.timeInMinutes);
+            task.ending = task.dataDeadline;
             
             return task;
         }
 
-        private static string[] DivisionIntoElements(string line)
+        public static string[] DivisionIntoElements(string line)
         {
-            return line.Split(new char[] { '|' });
+            return line.Split('|');
         }
 
         private static int TaskCounter(StreamReader sr)

@@ -6,39 +6,51 @@ using System.Threading.Tasks;
 
 namespace Planner
 {
-    internal class Task
+    public class Task
     {
-        public string Name;
-        public int TimeInMinutes;
-        public DateTime DataDeadline;
-        public byte Importance;
-        public DateTime Beginning;
-        public DateTime Ending;
-        public bool EnoughTime = true;
-        public bool Fixed = false; 
+        public string name;
+        public int timeInMinutes;
+        public DateTime dataDeadline;
+        public byte importance;
+        public DateTime beginning;
+        public DateTime ending;
+        public bool enoughTime = true;
+        public bool @fixed = false;
+
+        public Task() { }
+
+        public Task(string name, int timeInMinutes, DateTime dataDeadline, byte importance, DateTime beginning, DateTime ending)
+        {
+            this.name = name;
+            this.timeInMinutes = timeInMinutes;
+            this.dataDeadline = dataDeadline;
+            this.importance = importance;
+            this.beginning = beginning;
+            this.ending = ending;
+        }
 
         public static void PrintActual(Task task)
         {
-            if (task?.Name != null) {
-                Console.WriteLine("     Название задачи: " + task?.Name);
-                Console.WriteLine("     Потребуется минут на выполнение: " + task?.TimeInMinutes);
-                Console.WriteLine("     Важность задачи: " + task?.Importance);
-                Console.WriteLine("     Начало задачи в: " + task?.Beginning);
-                Console.WriteLine("     Конец задачи в: " + task?.Ending);
-                Console.WriteLine("     Дедлайн: " + task?.DataDeadline);
+            if (task?.name != null) {
+                Console.WriteLine("     Название задачи: " + task?.name);
+                Console.WriteLine("     Потребуется минут на выполнение: " + task?.timeInMinutes);
+                Console.WriteLine("     Важность задачи: " + task?.importance);
+                Console.WriteLine("     Начало задачи в: " + task?.beginning);
+                Console.WriteLine("     Конец задачи в: " + task?.ending);
+                Console.WriteLine("     Дедлайн: " + task?.dataDeadline);
                 Console.WriteLine("");
             }
         }
 
         public static void PrintOverdue(Task task)
         {
-            if (!task.EnoughTime)
+            if (!task.enoughTime)
             {
-                Console.WriteLine("     Название задачи: " + task?.Name);
-                Console.WriteLine("     Требовалось минут на выполнение: " + task?.TimeInMinutes);
-                Console.WriteLine("     Дедлайн был: " + task?.DataDeadline);
-                Console.WriteLine("     Важность задачи: " + task?.Importance);
-                Console.WriteLine("     Дедлайн просрочен на: " + (DateTime.Now - task?.DataDeadline) );
+                Console.WriteLine("     Название задачи: " + task?.name);
+                Console.WriteLine("     Требовалось минут на выполнение: " + task?.timeInMinutes);
+                Console.WriteLine("     Дедлайн был: " + task?.dataDeadline);
+                Console.WriteLine("     Важность задачи: " + task?.importance);
+                Console.WriteLine("     Дедлайн просрочен на: " + (DateTime.Now - task?.dataDeadline) );
                 Console.WriteLine("");
             }
         }
