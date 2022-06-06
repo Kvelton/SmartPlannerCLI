@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Planner
 {
-    internal class RankingOfTasks
+    public class RankingOfTasks
     {
         public static Task[] RankingByImportance(ref Task[] listTasks)
         {

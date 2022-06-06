@@ -151,7 +151,7 @@ namespace Planner
             }
         }
 
-        private static bool NotEnoughTimeQuestion(ref Task task)
+        public static bool NotEnoughTimeQuestion(ref Task task)
         {
             if (task.beginning < DateTime.Now)
             {
@@ -213,7 +213,7 @@ namespace Planner
             }
         }
 
-        private static Task[] CopyingArrayTasks(Task[] arrayTasks)
+        public static Task[] CopyingArrayTasks(Task[] arrayTasks)
         {
             Task[] newArrayTasks = new Task[arrayTasks.Length];
             for (int i = 0; i < arrayTasks.Length; i++)
