@@ -44,7 +44,7 @@ namespace Planner
 
         public static void PrintOverdue(Task task)
         {
-            if (!task.enoughTime)
+            if (!task?.enoughTime?? false)
             {
                 Console.WriteLine("     Название задачи: " + task?.name);
                 Console.WriteLine("     Требовалось минут на выполнение: " + task?.timeInMinutes);

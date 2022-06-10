@@ -57,10 +57,32 @@ namespace Planner
 
             Task[] timeLine = LocationOfTasksOnTimeLine.SortingTask(listTasks);
 
+            Task[] overdueTasks;
+            overdueTasks = OverdueTasks(listTasks, timeLine);
+
             PrintListTasks(timeLine, "Actual");
-            PrintListTasks(listTasks, "Overdue");
+            PrintListTasks(overdueTasks, "Overdue");
 
             WriteData.WriteTask(listTasks);
+        }
+        
+        public static Task[] OverdueTasks(Task[] listTasks, Task[] timeline)
+        {
+            string[] arrayNameTasks = new string[timeline.Length];
+            Task[] overdueTasks = new Task[listTasks.Length];
+            for (int i = 0; i < timeline.Length; i++)
+            {
+                arrayNameTasks[i] = timeline[i]?.name ?? "";
+            }
+            for (int i = 0; i < listTasks.Length; i++)
+            {
+                if (Array.IndexOf(arrayNameTasks, listTasks[i].name) < 0)
+                {
+                    listTasks[i].enoughTime = false;
+                    overdueTasks[i] = listTasks[i];
+                }
+            }
+            return overdueTasks;
         }
         private static void DeletingTask()
         {
