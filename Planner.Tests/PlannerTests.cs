@@ -95,7 +95,7 @@ namespace Planner.Tests
                 ) };
          
             Task goal = (LocationOfTasksOnTimeLine.CopyingArrayTasks(taskList)[0]);
-            Assert.AreEqual(goal, taskList[0]);
+            Assert.AreEqual(goal.name, taskList[0].name);
         }
 
         [TestMethod]

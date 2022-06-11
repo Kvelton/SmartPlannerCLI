@@ -14,13 +14,13 @@ namespace Planner
 
             string[] blockingTimeWeek =
             {
-                "12:00", "01:00",//пн
-                "13:00", "16:00",//вт
-                "14:00", "17:00",//ср
-                "15:00", "18:00",//чт
-                "16:00", "19:00",//пт
-                "17:00", "20:00",//сб
-                "18:00", "01:00"//вс
+                "16:00", "21:00",//пн
+                "16:00", "22:00",//вт
+                "17:00", "01:00",//ср
+                "15:00", "17:00",//чт
+                "18:00", "19:00",//пт
+                "00:00", "00:00",//сб
+                "00:00", "00:00"//вс
             };
             Task[] arrayBlockTime = DailyTimeLimit(blockingTimeWeek);
             timeLine = AddBlokingTime(arrayBlockTime, listTasks);
@@ -42,11 +42,6 @@ namespace Planner
                 timeLine[i].beginning = blockTime[(i + 6)%7].beginning;
                 timeLine[i].ending = blockTime[(i + 6) % 7].ending;
                 timeLine[i].@fixed = true;
-
-                
-                Console.WriteLine(timeLine[i].beginning);
-                Console.WriteLine("------------------------");
-                Console.WriteLine(timeLine[i].dataDeadline);
 
                 blockTime[(i + 6) % 7].dataDeadline = blockTime[(i + 6) % 7].dataDeadline.AddDays(7);
                 blockTime[(i + 6) % 7].beginning = blockTime[(i + 6) % 7].beginning.AddDays(7);
@@ -266,7 +261,7 @@ namespace Planner
             {
                 Task blockedTime = new Task();
 
-                blockedTime.beginning = DateTime.Today.AddDays(i);
+                blockedTime.beginning = DateTime.Today.AddDays(i-1);
                 blockedTime.dataDeadline = DateTime.Today.AddDays(i);
 
                 if (blockedDayWeek(i) == 0)
@@ -278,6 +273,39 @@ namespace Planner
                 {
                     blockedTime.beginning = blockedTime.beginning.AddHours((Convert.ToDateTime(arrayLimiyTime[blockedDayWeek(i) * 2 - 1])).Hour);
                     blockedTime.beginning = blockedTime.beginning.AddMinutes((Convert.ToDateTime(arrayLimiyTime[blockedDayWeek(i) * 2 - 1])).Minute);
+                }
+
+                if(i == 0)
+                {
+                    Task lastBlockedTime = new Task();
+                    lastBlockedTime.dataDeadline = lastBlockedTime.dataDeadline.AddHours((Convert.ToDateTime(arrayLimiyTime[12])).Hour);
+                    lastBlockedTime.dataDeadline = lastBlockedTime.dataDeadline.AddMinutes((Convert.ToDateTime(arrayLimiyTime[12])).Minute);
+                    if (blockedTime.beginning.Hour < lastBlockedTime.dataDeadline.Hour)
+                    {
+                        blockedTime.beginning = blockedTime.beginning.AddDays(1);
+                    }
+                    if (blockedTime.beginning.Hour == lastBlockedTime.dataDeadline.Hour)
+                    {
+                        if (blockedTime.beginning.Minute < lastBlockedTime.dataDeadline.Minute)
+                        {
+                            blockedTime.beginning = blockedTime.beginning.AddDays(1);
+                        }
+                    }
+                }
+                else
+                {
+                    if (blockedTime.beginning.Hour < arrayBlokedTime[i - 1].dataDeadline.Hour)
+                    {
+                        blockedTime.beginning = blockedTime.beginning.AddDays(1);
+                    }
+                    if (blockedTime.beginning.Hour == arrayBlokedTime[i - 1].dataDeadline.Hour)
+                    {
+                        if (blockedTime.beginning.Minute < arrayBlokedTime[i - 1].dataDeadline.Minute)
+                        {
+
+                            blockedTime.beginning = blockedTime.beginning.AddDays(1);
+                        }
+                    }
                 }
 
                 blockedTime.dataDeadline = blockedTime.dataDeadline.AddHours((Convert.ToDateTime(arrayLimiyTime[blockedDayWeek(i) * 2])).Hour);

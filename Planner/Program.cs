@@ -11,18 +11,18 @@ namespace Planner
     {
         static void Main(string[] args)
         {
-            UpdateList();
+            
 
-            WaitingCommand();
+            WaitingCommand(UpdateList());
         }
 
-        private static void WaitingCommand()
+        private static void WaitingCommand(Task[] timeLine)
         {
             bool stop = false;
             while (!stop)
             {
 
-                Console.WriteLine("Выберите действие: Обновить/Удалить/Изменить/Добавить/Закончить");
+                Console.WriteLine("Выберите действие: Обновить/Удалить/Изменить/Добавить/Узнать свободное время/Закончить");
                 string command = Console.ReadLine();
                 switch (command)
                 {
@@ -38,6 +38,10 @@ namespace Planner
                     case "Добавить":
                         AddTask();
                         break;
+                    case "Узнать свободное время":
+                        TimeSpan freeTime = FreeTime(timeLine, new DateTime(2022, 06, 17));
+                        Console.WriteLine("Свободное время "+ freeTime.Days + "." + freeTime.Hours + ":" + freeTime.Minutes);
+                        break;
                     case "Закончить":
                         stop = true;
                         break;
@@ -49,7 +53,7 @@ namespace Planner
 
             }
         }
-        private static void UpdateList()
+        private static Task[] UpdateList()
         {
             Task[] listTasks = DataEntry.EntryTasks();
 
@@ -64,6 +68,8 @@ namespace Planner
             PrintListTasks(overdueTasks, "Overdue");
 
             WriteData.WriteTask(listTasks);
+
+            return timeLine;
         }
         
         public static Task[] OverdueTasks(Task[] listTasks, Task[] timeline)
@@ -120,6 +126,43 @@ namespace Planner
         public static void EditTask()
         {
 
+        }
+
+        public static TimeSpan FreeTime(Task[] timeLine, DateTime day)
+        {
+            TimeSpan freeTime;
+            int i = 0;
+
+            while (timeLine[i].beginning < DateTime.Now)
+            {
+                i++;
+            }
+            if(i == 0)
+            {
+                freeTime = timeLine[i].beginning - DateTime.Now;
+            }
+            else
+            {
+                if (timeLine[i - 1].ending > DateTime.Now)
+                {
+                    freeTime = timeLine[i].beginning - timeLine[i - 1].ending;
+                }
+                else
+                {
+                    freeTime = timeLine[i].beginning - DateTime.Now;
+                }
+            }
+
+            while (timeLine[i]?.ending < day.AddDays(1) && i != timeLine.Length-1)
+            {
+                if (timeLine[i] != null && timeLine[i+1] != null)
+                {
+                    freeTime += timeLine[i + 1].beginning - timeLine[i].ending;
+                }
+                i++;
+            }
+             
+            return freeTime;
         }
         public static void PrintListTasks(Task[] listTasks, string typeTask)
         {
