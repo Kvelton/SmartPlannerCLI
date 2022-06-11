@@ -11,10 +11,19 @@ namespace Planner
         public static Task[] SortingTask(Task[] listTasks)
         {
             Task[] timeLine;
-            
 
-            Task blockTime = InputDailyTimeLimit();
-            timeLine = AddBlokingTime(blockTime, listTasks);
+            string[] blockingTimeWeek =
+            {
+                "12:00", "01:00",//пн
+                "13:00", "16:00",//вт
+                "14:00", "17:00",//ср
+                "15:00", "18:00",//чт
+                "16:00", "19:00",//пт
+                "17:00", "20:00",//сб
+                "18:00", "01:00"//вс
+            };
+            Task[] arrayBlockTime = DailyTimeLimit(blockingTimeWeek);
+            timeLine = AddBlokingTime(arrayBlockTime, listTasks);
 
             OffsetTask(ref listTasks, ref timeLine);
             
@@ -22,33 +31,29 @@ namespace Planner
         }
         
 
-        private static Task[] AddBlokingTime(Task blockTime, Task[]listTasks)
+        private static Task[] AddBlokingTime(Task[] blockTime, Task[]listTasks)
         {
             Task[] timeLine = new Task[listTasks.Length + LengthTimeLIne(listTasks)];
 
-            for (int i = 0; i < LengthTimeLIne(listTasks); i++)
+            for (int i = 0; i < LengthTimeLIne(listTasks)+1; i++)
             {
                 timeLine[i] = new Task();
-                timeLine[i].dataDeadline = blockTime.dataDeadline;
-                timeLine[i].beginning = blockTime.beginning;
-                timeLine[i].ending = blockTime.ending;
+                timeLine[i].dataDeadline = blockTime[(i+6)%7].dataDeadline;
+                timeLine[i].beginning = blockTime[(i + 6)%7].beginning;
+                timeLine[i].ending = blockTime[(i + 6) % 7].ending;
                 timeLine[i].@fixed = true;
 
-                blockTime.dataDeadline = blockTime.dataDeadline.AddDays(1);
-                blockTime.beginning = blockTime.beginning.AddDays(1);
-                blockTime.ending = blockTime.ending.AddDays(1);
+                
+                Console.WriteLine(timeLine[i].beginning);
+                Console.WriteLine("------------------------");
+                Console.WriteLine(timeLine[i].dataDeadline);
+
+                blockTime[(i + 6) % 7].dataDeadline = blockTime[(i + 6) % 7].dataDeadline.AddDays(7);
+                blockTime[(i + 6) % 7].beginning = blockTime[(i + 6) % 7].beginning.AddDays(7);
+                blockTime[(i + 6) % 7].ending = blockTime[(i + 6) % 7].ending.AddDays(7);
             }
 
             return timeLine;
-        }
-
-        private static Task InputDailyTimeLimit()
-        {
-            /*            Console.WriteLine("Введите время выполнения c XX:XX");
-                        Console.WriteLine("по XX:XX");
-
-                        return DailyTimeLimit(Console.ReadLine(), Console.ReadLine());*/
-            return DailyTimeLimit("15:00", "21:00");
         }
 
         private static void OffsetTask(ref Task[] listTasks, ref Task[] timeLine) // переписать название функции
@@ -254,27 +259,58 @@ namespace Planner
             }
             return newArrayTasks;
         }
-
-        private static Task DailyTimeLimit(string timeStart , string timeEnd)
+        private static Task[] DailyTimeLimit(string[] arrayLimiyTime)
         {
-            Task blockedTime = new Task();
+            Task[] arrayBlokedTime = new Task[arrayLimiyTime.Length/2];
+            for (int i = 0; i < arrayBlokedTime.Length; i++)
+            {
+                Task blockedTime = new Task();
 
-            blockedTime.beginning = DateTime.Today;
-            blockedTime.beginning = blockedTime.beginning.AddHours((Convert.ToDateTime(timeEnd)).Hour);
-            blockedTime.beginning = blockedTime.beginning.AddMinutes((Convert.ToDateTime(timeEnd)).Minute);
+                blockedTime.beginning = DateTime.Today.AddDays(i);
+                blockedTime.dataDeadline = DateTime.Today.AddDays(i);
 
-            blockedTime.dataDeadline = DateTime.Today;
-            blockedTime.dataDeadline = blockedTime.dataDeadline.AddHours((Convert.ToDateTime(timeStart)).Hour);
-            blockedTime.dataDeadline = blockedTime.dataDeadline.AddMinutes((Convert.ToDateTime(timeStart)).Minute);
+                if (blockedDayWeek(i) == 0)
+                {
+                    blockedTime.beginning = blockedTime.beginning.AddHours((Convert.ToDateTime(arrayLimiyTime[13])).Hour);
+                    blockedTime.beginning = blockedTime.beginning.AddMinutes((Convert.ToDateTime(arrayLimiyTime[13])).Minute);
+                }
+                else
+                {
+                    blockedTime.beginning = blockedTime.beginning.AddHours((Convert.ToDateTime(arrayLimiyTime[blockedDayWeek(i) * 2 - 1])).Hour);
+                    blockedTime.beginning = blockedTime.beginning.AddMinutes((Convert.ToDateTime(arrayLimiyTime[blockedDayWeek(i) * 2 - 1])).Minute);
+                }
 
-            BlockedTimeInOneDay(ref blockedTime);
+                blockedTime.dataDeadline = blockedTime.dataDeadline.AddHours((Convert.ToDateTime(arrayLimiyTime[blockedDayWeek(i) * 2])).Hour);
+                blockedTime.dataDeadline = blockedTime.dataDeadline.AddMinutes((Convert.ToDateTime(arrayLimiyTime[blockedDayWeek(i) * 2])).Minute);
 
-            blockedTime.ending = blockedTime.dataDeadline;
-            blockedTime.@fixed = true;
+                if (i == 6)
+                {
+                    blockedTime.beginning = blockedTime.beginning.AddDays(-7);
+                    blockedTime.dataDeadline = blockedTime.dataDeadline.AddDays(-7);
+                }
 
-            return blockedTime;
+                BlockedTimeInOneDay(ref blockedTime);
+
+                blockedTime.ending = blockedTime.dataDeadline;
+                blockedTime.@fixed = true;
+
+                arrayBlokedTime[i] = blockedTime;
+            }
+            return arrayBlokedTime;
         }
-
+        private static int blockedDayWeek(int i)
+        {
+            int index = 0;
+            if (((int)DateTime.Today.DayOfWeek + 13) % 7 + i > 6)
+            {
+                index = ((int)DateTime.Today.DayOfWeek + 13) % 7 + i - 7;
+            }
+            else
+            {
+                index = ((int)DateTime.Today.DayOfWeek + 13) % 7 + i;
+            }
+            return index;
+        }
         private static void BlockedTimeInOneDay(ref Task blockedTime)
         {
             if (blockedTime.dataDeadline < blockedTime.beginning)
